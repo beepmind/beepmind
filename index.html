@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>心靈聲景 - 您的心聲樹洞</title>
+  <style>
+    /* ==========================================
+       1. 系統重置與 iOS 磨砂流體微光背景
+    ========================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      min-height: 100dvh;
+      background-color: #f1f5f9;
+      color: #1e293b;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: env(safe-area-inset-top, 14px) 16px env(safe-area-inset-bottom, 18px) 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 動態光斑球體 */
+    .ambient-glow {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(65px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.65;
+      animation: floatAmbient 12s ease-in-out infinite alternate;
+    }
+    .glow-mint {
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, #6ee7b7, #10b981);
+      top: -40px; left: -50px;
+    }
+    .glow-indigo {
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, #c7d2fe, #818cf8);
+      bottom: 40px; right: -60px;
+      animation-duration: 15s;
+    }
+    .glow-peach {
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, #fed7aa, #fb923c);
+      top: 45%; left: 35%;
+      opacity: 0.35;
+      animation-duration: 9s;
+    }
+    @keyframes floatAmbient {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(25px, 20px) scale(1.08); }
+    }
+
+    /* ==========================================
+       2. iPhone 全螢幕縱向佈局與 Glassmorphism
+    ========================================== */
+    .app-viewport {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+      margin: auto 0;
+    }
+
+    .ios-glass {
+      background: rgba(255, 255, 255, 0.58);
+      backdrop-filter: blur(28px) saturate(210%);
+      -webkit-backdrop-filter: blur(28px) saturate(210%);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: 26px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.04), inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
+    }
+
+    .top-navbar {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar-frame {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: white;
+      border: 2px solid rgba(16, 185, 129, 0.4);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    .user-headline { font-size: 15px; font-weight: 700; color: #0f172a; }
+    .status-dot {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600; color: #059669;
+    }
+    .status-dot::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; background: #10b981;
+    }
+    .nav-buttons { display: flex; gap: 6px; }
+    .btn-pill {
+      border: none; font-size: 11.5px; font-weight: 600;
+      padding: 7px 11px; border-radius: 14px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 3px;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .btn-pill:active { transform: scale(0.94); opacity: 0.85; }
+    .btn-cal { background: rgba(99, 102, 241, 0.12); color: #4338ca; border: 1px solid rgba(99, 102, 241, 0.2); }
+    .btn-logout { background: rgba(239, 68, 68, 0.1); color: #b91c1c; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+    /* ==========================================
+       3. 中段拇指操作黃金區域
+    ========================================== */
+    .hero-stage {
+      position: relative;
+      min-height: 330px;
+      padding: 22px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow: visible;
+    }
+
+    .badge-label {
+      padding: 5px 13px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 20px;
+      font-size: 11px; font-weight: 600; color: #065f46;
+    }
+
+    .app-title {
+      font-size: 23px; font-weight: 800; letter-spacing: -0.5px;
+      color: #0f172a; margin: 4px 0 10px 0;
+    }
+
+    .record-center-wrap {
+      position: relative;
+      width: 172px; height: 172px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 10px 0;
+    }
+
+    .countdown-svg {
+      position: absolute; top: 0; left: 0;
+      width: 172px; height: 172px;
+      transform: rotate(-90deg);
+      display: none;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .countdown-circle-bg { fill: none; stroke: rgba(0, 0, 0, 0.05); stroke-width: 8; }
+    .countdown-circle {
+      fill: none; stroke: #10b981; stroke-width: 8; stroke-linecap: round;
+      stroke-dasharray: 484; stroke-dashoffset: 484;
+      transition: stroke-dashoffset 0.1s linear, stroke 0.2s ease;
+    }
+
+    .record-core-btn {
+      width: 142px; height: 142px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(145deg, #10b981, #059669);
+      color: white;
+      cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 16px 36px rgba(16, 185, 129, 0.38), inset 0 2px 3px rgba(255, 255, 255, 0.5);
+      outline: none;
+      touch-action: none;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, box-shadow 0.2s;
+    }
+    .record-core-btn.recording {
+      transform: scale(1.08);
+      background: linear-gradient(145deg, #059669, #047857);
+      box-shadow: 0 0 0 12px rgba(16, 185, 129, 0.22), 0 20px 40px rgba(16, 185, 129, 0.45);
+    }
+    .record-core-btn.cancelling {
+      transform: scale(0.92) !important;
+      background: linear-gradient(145deg, #ef4444, #dc2626) !important;
+      box-shadow: 0 0 0 14px rgba(239, 68, 68, 0.28), 0 20px 40px rgba(239, 68, 68, 0.45) !important;
+    }
+    .btn-main-txt { font-size: 19px; font-weight: 800; letter-spacing: -0.3px; }
+    .btn-sub-txt { font-size: 11.5px; opacity: 0.9; margin-top: 4px; font-weight: 500; }
+
+    /* ==========================================
+       4. 樹洞精靈組件
+    ========================================== */
+    .sprite-actor {
+      position: absolute;
+      width: 68px; height: 68px;
+      z-index: 25;
+      touch-action: none;
+      cursor: grab;
+      display: flex; flex-direction: column; align-items: center;
+      top: 65px; right: 20px;
+      transition: transform 3.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .sprite-actor.dragging {
+      cursor: grabbing;
+      transition: none !important;
+    }
+
+    .sprite-avatar-ball {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(236, 253, 245, 0.95), rgba(209, 250, 229, 0.85));
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 22px rgba(16, 185, 129, 0.25);
+      font-size: 28px;
+      display: flex; align-items: center; justify-content: center;
+      animation: spriteWingFloat 2.8s ease-in-out infinite alternate;
+    }
+    @keyframes spriteWingFloat {
+      0% { transform: translateY(0) rotate(-3deg); }
+      100% { transform: translateY(-6px) rotate(4deg); }
+    }
+    .sprite-tagname {
+      font-size: 10px; font-weight: 700; color: #065f46; margin-top: 3px;
+      background: rgba(255, 255, 255, 0.7); padding: 1px 6px; border-radius: 8px;
+      white-space: nowrap; pointer-events: none;
+    }
+
+    .sprite-ambient-whisper {
+      position: absolute;
+      bottom: 72px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(167, 243, 208, 0.9);
+      border-radius: 16px;
+      padding: 6px 12px;
+      font-size: 11.5px; font-weight: 600; color: #065f46;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(6px) scale(0.9);
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .sprite-ambient-whisper.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .sprite-ambient-whisper::after {
+      content: ''; position: absolute; bottom: -6px; left: 50%;
+      transform: translateX(-50%);
+      border-width: 6px 6px 0; border-style: solid;
+      border-color: rgba(255, 255, 255, 0.96) transparent;
+    }
+
+    .sprite-interactive-box {
+      position: absolute;
+      bottom: 74px;
+      right: -10px;
+      width: 250px;
+      min-height: 50px;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: normal;
+      word-break: break-word;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(167, 243, 208, 0.85);
+      border-radius: 20px;
+      padding: 13px 14px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.1);
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: #1e293b;
+      display: none;
+      z-index: 40;
+    }
+    .bubble-close-btn {
+      position: absolute; top: 6px; right: 9px;
+      border: none; background: transparent; font-size: 15px; color: #94a3b8; cursor: pointer;
+    }
+
+    .stage-status-tip {
+      font-size: 12px; color: #64748b; font-weight: 500; min-height: 18px;
+      text-align: center;
+    }
+
+    /* ==========================================
+       5. 隱私脫敏驗證表格
+    ========================================= */
+    .inspect-card { padding: 12px; }
+    .inspect-frame {
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.7);
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 18px;
+    }
+    .inspect-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+    .inspect-table th {
+      padding: 8px 12px; font-weight: 600; color: #64748b;
+      background: rgba(241, 245, 249, 0.65); border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      text-align: left;
+    }
+    .inspect-table td {
+      padding: 9px 12px; vertical-align: top; line-height: 1.45; word-break: break-all;
+    }
+    .td-raw { width: 50%; color: #334155; border-right: 1px solid rgba(226, 232, 240, 0.7); background: rgba(255, 255, 255, 0.35); }
+    .td-clean { width: 50%; color: #047857; font-weight: 500; background: rgba(236, 253, 245, 0.45); }
+
+    /* ==========================================
+       6. 底部 Action C
+    ========================================== */
+    .footer-dock {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .action-c-btn {
+      width: 100%; padding: 13px;
+      border: none; border-radius: 18px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white; font-size: 14px; font-weight: 700;
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+      cursor: pointer; transition: transform 0.15s, opacity 0.2s;
+    }
+    .action-c-btn:active { transform: scale(0.98); opacity: 0.9; }
+    .action-c-tip { font-size: 11px; color: #64748b; font-weight: 500; }
+
+    /* 通用彈窗樣式 */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      z-index: 999; display: none; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .modal-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(30px);
+      width: 100%; max-width: 380px;
+      border-radius: 26px; padding: 22px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.18);
+      text-align: center;
+    }
+    .ios-input {
+      width: 100%; padding: 11px 12px; border: 1px solid #d1d5db;
+      background: #f8fafc; border-radius: 14px; font-size: 13px;
+      outline: none; margin-bottom: 10px; text-align: center;
+    }
+    .ios-input:focus { border-color: #10b981; background: #ffffff; }
+    .email-switch-row { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; }
+    .segmented-control {
+      display: inline-flex; background: #e2e8f0; border-radius: 12px; padding: 2px;
+    }
+    .seg-btn {
+      border: none; background: transparent; padding: 7px 9px;
+      font-size: 11px; font-weight: 600; color: #64748b; border-radius: 10px; cursor: pointer;
+    }
+    .seg-btn.active { background: #ffffff; color: #065f46; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
+    .primary-btn {
+      width: 100%; padding: 12px; border: none; border-radius: 16px;
+      background: #10b981; color: white; font-size: 14px; font-weight: 700;
+      cursor: pointer; box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    /* ==========================================================
+       7. 極端危機不可關閉全屏遮罩層 (CRISIS_LEVEL_3)
+    ========================================================== */
+    .crisis-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.84);
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      z-index: 99999;
+      display: none; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .crisis-card {
+      background: #ffffff;
+      border: 2px solid #ef4444;
+      border-radius: 28px;
+      max-width: 420px; width: 100%;
+      padding: 24px 20px;
+      box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.4);
+      text-align: left;
+      animation: pulseCard 3s ease-in-out infinite alternate;
+    }
+    @keyframes pulseCard {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45); }
+      100% { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
+    }
+    .crisis-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fee2e2; color: #b91c1c;
+      font-size: 11.5px; font-weight: 800; padding: 4px 10px;
+      border-radius: 12px; margin-bottom: 12px;
+    }
+    .crisis-title {
+      font-size: 19px; font-weight: 800; color: #991b1b;
+      line-height: 1.35; margin-bottom: 8px;
+    }
+    .crisis-message {
+      font-size: 13px; color: #475569; line-height: 1.55; margin-bottom: 16px;
+    }
+    .hotline-group {
+      background: #f8fafc; border: 1px solid #e2e8f0;
+      border-radius: 18px; padding: 12px 14px; margin-bottom: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .hotline-item {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;
+    }
+    .hotline-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .hotline-label { font-size: 12px; font-weight: 600; color: #334155; }
+    .hotline-phone {
+      font-size: 13px; font-weight: 800; color: #dc2626;
+      text-decoration: none; display: flex; align-items: center; gap: 4px;
+    }
+    .school-care-box {
+      background: #fff7ed; border: 1.5px solid #fdba74;
+      border-radius: 16px; padding: 12px 14px;
+      font-size: 12.5px; color: #9a3412; line-height: 1.5; font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 環境光斑球體 -->
+  <div class="ambient-glow glow-mint"></div>
+  <div class="ambient-glow glow-indigo"></div>
+  <div class="ambient-glow glow-peach"></div>
+
+  <!-- 極端危機不可關閉保護彈窗 (CRISIS_LEVEL_3) -->
+  <div id="crisisModal" class="crisis-overlay">
+    <div class="crisis-card">
+      <div class="crisis-badge">
+        <span>🛡️</span> 守護生命 · 專業支援介入
+      </div>
+      <h3 class="crisis-title">我們非常在乎你，請給自己一個被傾聽的機會</h3>
+      <p class="crisis-message">
+        樹洞感受到你此刻承受著極大的痛苦與無助。請記住，<strong>你不是孤單一人</strong>。本系統已暫停常規記錄，請直接聯繫以下專業求助熱線：
+      </p>
+
+      <div class="hotline-group">
+        <div class="hotline-item">
+          <span class="hotline-label">社會工作局 24小時電話輔導熱線</span>
+          <a href="tel:28261126" class="hotline-phone">📞 2826 1126</a>
+        </div>
+        <div class="hotline-item">
+          <div>
+            <div class="hotline-label">澳門明愛 24小時學生輔導熱線</div>
+            <div style="font-size: 10px; color: #059669; font-weight: bold;">WeChat: hearteninghotline</div>
+          </div>
+          <a href="tel:28333113" class="hotline-phone">📞 2833 3113</a>
+        </div>
+        <div class="hotline-item">
+          <span class="hotline-label">澳門明愛生命熱線</span>
+          <a href="tel:28525222" class="hotline-phone">📞 2852 5222</a>
+        </div>
+        <div class="hotline-item">
+          <span class="hotline-label">教青局教育心理輔導及特殊教育中心</span>
+          <a href="tel:28401010" class="hotline-phone">📞 2840 1010</a>
+        </div>
+        <div class="hotline-item">
+          <span class="hotline-label">澳門學聯升學及心理輔導中心</span>
+          <a href="tel:28723143" class="hotline-phone">📞 2872 3143</a>
+        </div>
+      </div>
+
+      <div class="school-care-box">
+        🏫 <strong>校內即時支援：</strong><br>
+        請直接前往學校<strong>學生心理輔導室</strong>尋求<strong>駐校社工</strong>，或即刻告訴班主任與信任的老師。大家都在這裡陪伴你！
+      </div>
+    </div>
+  </div>
+
+  <!-- 註冊彈窗 -->
+  <div id="onboardingModal" class="modal-overlay">
+    <div class="modal-card">
+      <div id="obStep1">
+        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">🌳 歡迎來到心靈樹洞</h3>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 14px;">請設置專屬身分以開啟隱私日記空間</p>
+
+        <div class="email-switch-row">
+          <input type="text" id="modalEmailPrefix" class="ios-input" style="margin-bottom:0; flex:1; text-align:left;" placeholder="信箱前綴" autocapitalize="none">
+          <div class="segmented-control" id="domainSegmented">
+            <button type="button" class="seg-btn active" data-domain="@gmail.com">@gmail.com</button>
+            <button type="button" class="seg-btn" data-domain="@g.puiching.edu.mo">@xxx.edu.mo</button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+          <input type="text" id="modalNickname" class="ios-input" style="margin-bottom:0; flex:1;" placeholder="你的化身暱稱">
+          <button id="randomNameBtn" type="button" style="border:none; background:#ecfdf5; color:#065f46; border-radius:12px; padding:0 12px; font-size:12px; font-weight:600; cursor:pointer;">🎲 換一個</button>
+        </div>
+
+        <button id="toStep2Btn" class="primary-btn">下一步：繪製擬獸化貼圖</button>
+      </div>
+
+      <div id="obStep2" style="display:none;">
+        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">🎨 繪製專屬心靈頭像</h3>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">一句話自我介紹，轉化為二次元小動物貼圖</p>
+
+        <div style="background:#f8fafc; border:1px dashed #cbd5e1; padding:9px 12px; border-radius:12px; font-size:11.5px; color:#475569; text-align:left; margin-bottom:10px; cursor:pointer;" id="templateFillBtn">
+          💡 點此套用範本：<span style="color:#059669; font-weight:600;">「黑短髮馬尾女仔，戴眼鏡，鍾意跑步聽歌」</span>
+        </div>
+
+        <textarea id="introText" rows="3" class="ios-input" style="text-align:left; resize:none;" placeholder="描述你的外貌或愛好..."></textarea>
+
+        <button id="generateAvatarBtn" class="primary-btn">生成二次元頭像並開啟樹洞</button>
+        <div id="modalLoading" style="display:none; font-size:11px; color:#f59e0b; margin-top:8px;">🎨 正在透過雲端三通道管線繪製貼圖頭像...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 校曆與先驗日程彈窗 -->
+  <div id="calendarModal" class="modal-overlay">
+    <div class="modal-card">
+      <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 4px;">📅 校曆與日程先驗設置</h3>
+      <p style="font-size: 11.5px; color: #64748b; margin-bottom: 14px; line-height: 1.45;">
+        自願提供學校校曆或近期事件（考試、校運會），讓 AI 能夠以時空連續性同理你的近況。文字將加密寫入 J 欄。
+      </p>
+
+      <div style="margin-bottom:10px; text-align:left;">
+        <label style="font-size:11px; font-weight:700; color:#475569;">方式一：上傳校曆檔案 (圖片或 PDF)</label>
+        <input type="file" id="calFileInput" accept="image/*,application/pdf" style="font-size:11px; margin-top:4px; width:100%;">
+      </div>
+
+      <div style="margin-bottom:14px; text-align:left;">
+        <label style="font-size:11px; font-weight:700; color:#475569;">方式二：手動輸入未來一個月事件重點</label>
+        <textarea id="calTextInput" class="ios-input" rows="3" style="resize:none; text-align:left;" placeholder="例：10/12-14 默書週；10/22 數學期中考；10/30 班際排球賽。"></textarea>
+      </div>
+
+      <div style="display:flex; gap:8px;">
+        <button id="closeCalModalBtn" style="flex:1; padding:10px; border:1px solid #d1d5db; background:white; border-radius:12px; font-size:12px; cursor:pointer;">取消</button>
+        <button id="saveCalBtn" style="flex:1; padding:10px; border:none; background:#4f46e5; color:white; border-radius:12px; font-size:12px; font-weight:bold; cursor:pointer;">儲存</button>
+      </div>
+      <div id="calSyncStatus" style="font-size:11px; color:#4f46e5; margin-top:8px; display:none;">⏳ 正在同步至 Google Sheets...</div>
+    </div>
+  </div>
+
+  <!-- 主視圖介面 -->
+  <div class="app-viewport">
+    
+    <!-- 頂部身分列 -->
+    <header class="ios-glass top-navbar">
+      <div class="user-profile-badge">
+        <img id="headerAvatar" class="avatar-frame" src="" alt="Avatar">
+        <div>
+          <div id="headerNickname" class="user-headline">同學</div>
+          <div class="status-dot">本地端側隱私保護中</div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button id="calBtn" class="btn-pill btn-cal">📅校曆/日曆</button>
+        <button id="logoutBtn" class="btn-pill btn-logout">切換帳戶</button>
+      </div>
+    </header>
+
+    <!-- 中段黃金舞台 -->
+    <main class="ios-glass hero-stage" id="heroStage">
+      
+      <div class="badge-label">端邊雲協同 · 粵/普/英語音識別 · 本地脫敏</div>
+      <h2 class="app-title">心靈聲景</h2>
+
+      <!-- 錄音按鈕與動態光環 -->
+      <div class="record-center-wrap">
+        <svg class="countdown-svg" id="countdownSvg" viewBox="0 0 172 172">
+          <circle class="countdown-circle-bg" cx="86" cy="86" r="77"></circle>
+          <circle class="countdown-circle" id="countdownCircle" cx="86" cy="86" r="77"></circle>
+        </svg>
+
+        <button id="recordBtn" class="record-core-btn">
+          <span id="btnLabel" class="btn-main-txt">按住講嘢</span>
+          <span id="btnSubLabel" class="btn-sub-txt">鬆手投遞 💌</span>
+        </button>
+      </div>
+
+      <!-- 可拖曳、自主飛行與生動耳語的小精靈 Actor -->
+      <div class="sprite-actor" id="spriteActor">
+        <div class="sprite-ambient-whisper" id="spriteWhisper">樹洞樹洞～🍃</div>
+        <div class="sprite-avatar-ball" id="spriteBall">🧚‍♂️</div>
+        <div class="sprite-tagname">樹洞精靈</div>
+
+        <div class="sprite-interactive-box" id="spriteBubble">
+          <button class="bubble-close-btn" id="closeBubbleBtn">×</button>
+          <div style="font-weight:700; color:#065f46; margin-bottom:4px;">🌿 樹洞精靈：</div>
+          <div id="spriteReplyContent">「我一直在這裡聽著呢。今天過得還順心嗎？」</div>
+        </div>
+      </div>
+
+      <div id="status" class="stage-status-tip">按住傾訴心事，向上滑移可取消投遞</div>
+    </main>
+
+    <!-- 脫敏對照表格 -->
+    <section class="ios-glass inspect-card">
+      <div class="inspect-frame">
+        <table class="inspect-table">
+          <thead>
+            <tr>
+              <th class="td-raw">語音識別原文字</th>
+              <th class="td-clean">本地 DRP 脫敏文字 (安全出網)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="tableRawText" class="td-raw">（未開始）</td>
+              <td id="tableSanitizedText" class="td-clean">（未開始）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 底部 Action C 按鈕 -->
+    <footer class="footer-dock">
+      <button id="btnActionC" class="action-c-btn">✨ 立即生成今日限定日記卡片</button>
+      <div id="actionCStatus" class="action-c-tip">每晚 21:00 定時自動聚合，亦可隨時點此手動提前總結</div>
+    </footer>
+
+  </div>
+
+  <!-- 前端互動腳本 -->
+  <script>
+    const ADJECTIVES = ['紅藍色的', '仰望星空的', '微光中的', '橘子汽水味', '戴耳機的', '半夜散步的', '窩在角落的', '正在發呆的', '薄荷味的', '雲朵般的'];
+    const NOUNS = ['機械貓', '卡皮巴拉', '魔法師', '小狐狸', '水母', '柴犬', '旅人', '潛水員', '獨角獸', '小樹苗'];
+
+    function generateRandomNickname() {
+      return ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)] + NOUNS[Math.floor(Math.random() * NOUNS.length)];
+    }
+
+    let currentUser = null;
+    let selectedEmailDomain = "@gmail.com";
+
+    const onboardingModal = document.getElementById("onboardingModal");
+    const headerAvatar = document.getElementById("headerAvatar");
+    const headerNickname = document.getElementById("headerNickname");
+    const domainSegmented = document.getElementById("domainSegmented");
+    const modalEmailPrefix = document.getElementById("modalEmailPrefix");
+
+    function checkAuthStatus() {
+      const saved = localStorage.getItem("treehole_user_profile");
+      if (saved) {
+        try { currentUser = JSON.parse(saved); } catch(e){ currentUser = null; }
+      } else {
+        currentUser = null;
+      }
+
+      if (currentUser && currentUser.email) {
+        onboardingModal.style.display = "none";
+        headerNickname.innerText = currentUser.nickname || "同學";
+        headerAvatar.src = currentUser.avatar || ("https://api.dicebear.com/7.x/bottts/svg?seed=" + encodeURIComponent(currentUser.nickname || "user"));
+      } else {
+        onboardingModal.style.display = "flex";
+        document.getElementById("obStep1").style.display = "block";
+        document.getElementById("obStep2").style.display = "none";
+        document.getElementById("modalNickname").value = generateRandomNickname();
+        modalEmailPrefix.value = "";
+      }
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      if (confirm("確定要切換帳號並重新登記嗎？")) {
+        localStorage.removeItem("treehole_user_profile");
+        currentUser = null;
+        checkAuthStatus();
+      }
+    });
+
+    domainSegmented.querySelectorAll(".seg-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        domainSegmented.querySelectorAll(".seg-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedEmailDomain = btn.dataset.domain;
+      });
+    });
+
+    function getFullEmail() {
+      let prefix = modalEmailPrefix.value.trim();
+      if (!prefix) return "";
+      if (prefix.includes("@")) prefix = prefix.split("@")[0].trim();
+      return prefix + selectedEmailDomain;
+    }
+
+    document.getElementById("randomNameBtn").addEventListener("click", () => {
+      document.getElementById("modalNickname").value = generateRandomNickname();
+    });
+
+    document.getElementById("toStep2Btn").addEventListener("click", () => {
+      const fullEmail = getFullEmail();
+      const nickname = document.getElementById("modalNickname").value.trim();
+      if (!fullEmail) { alert("請輸入您的信箱前綴"); modalEmailPrefix.focus(); return; }
+      if (!nickname) { alert("請輸入或隨機生成暱稱"); return; }
+      document.getElementById("obStep1").style.display = "none";
+      document.getElementById("obStep2").style.display = "block";
+    });
+
+    document.getElementById("templateFillBtn").addEventListener("click", () => {
+      document.getElementById("introText").value = "黑短髮馬尾女仔，戴眼鏡，鍾意跑步聽歌";
+    });
+
+    document.getElementById("generateAvatarBtn").addEventListener("click", async () => {
+      const fullEmail = getFullEmail();
+      const nickname = document.getElementById("modalNickname").value.trim();
+      const intro = document.getElementById("introText").value.trim() || "黑短髮馬尾女仔，戴眼鏡，鍾意跑步聽歌";
+      const loading = document.getElementById("modalLoading");
+
+      loading.style.display = "block";
+      document.getElementById("generateAvatarBtn").disabled = true;
+
+      try {
+        const resp = await fetch("/generate-avatar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: fullEmail, nickname: nickname, intro_text: intro })
+        });
+        const data = await resp.json();
+
+        let avatarUrl = (data.status === "success" && data.avatar_base64)
+          ? "data:image/png;base64," + data.avatar_base64
+          : (data.avatar_url || ("https://api.dicebear.com/7.x/bottts/svg?seed=" + encodeURIComponent(nickname)));
+
+        const profile = { email: fullEmail, nickname, avatar: avatarUrl, intro };
+        localStorage.setItem("treehole_user_profile", JSON.stringify(profile));
+        loading.style.display = "none";
+        document.getElementById("generateAvatarBtn").disabled = false;
+        checkAuthStatus();
+      } catch (e) {
+        const profile = { email: fullEmail, nickname, avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=" + encodeURIComponent(nickname), intro };
+        localStorage.setItem("treehole_user_profile", JSON.stringify(profile));
+        loading.style.display = "none";
+        document.getElementById("generateAvatarBtn").disabled = false;
+        checkAuthStatus();
+      }
+    });
+
+    // 校曆與日程先驗同步
+    const calModal = document.getElementById("calendarModal");
+    document.getElementById("calBtn").addEventListener("click", () => { calModal.style.display = "flex"; });
+    document.getElementById("closeCalModalBtn").addEventListener("click", () => { calModal.style.display = "none"; });
+
+    document.getElementById("saveCalBtn").addEventListener("click", async () => {
+      if (!currentUser) return;
+      const fileInput = document.getElementById("calFileInput");
+      const textInput = document.getElementById("calTextInput").value.trim();
+      const statusDiv = document.getElementById("calSyncStatus");
+      statusDiv.style.display = "block";
+      statusDiv.innerText = "⏳ 正在處理並同步至雲端 J 欄...";
+
+      const formData = new FormData();
+      formData.append("email", currentUser.email);
+      formData.append("calendar_text", textInput);
+      if (fileInput.files.length > 0) formData.append("calendar_file", fileInput.files[0]);
+
+      try {
+        const resp = await fetch("/upload-calendar", { method: "POST", body: formData });
+        const res = await resp.json();
+        if (res.status === "success") {
+          statusDiv.innerText = "✅ 日程先驗已成功更新至 J 欄！";
+          setTimeout(() => { calModal.style.display = "none"; statusDiv.style.display = "none"; }, 1200);
+        } else {
+          statusDiv.innerText = "❌ 更新失敗：" + (res.message || "未知錯誤");
+        }
+      } catch(e) {
+        statusDiv.innerText = "❌ 邊緣端伺服器未響應。";
+      }
+    });
+
+    // 樹洞精靈組件
+    const spriteActor = document.getElementById("spriteActor");
+    const spriteWhisper = document.getElementById("spriteWhisper");
+    const spriteBubble = document.getElementById("spriteBubble");
+    const spriteReplyContent = document.getElementById("spriteReplyContent");
+    const heroStage = document.getElementById("heroStage");
+    document.getElementById("closeBubbleBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      spriteBubble.style.display = "none";
+    });
+
+    const CUTE_WHISPERS = [
+      "我在留意著你的心聲呢 🌿",
+      "樹洞樹洞～呼叫你 🍃",
+      "飛呀飛～吹走你的小煩惱 🧚",
+      "今天辛苦啦，你已經好棒了 ✨",
+      "累了就深呼吸放鬆一下 🌸",
+      "悄悄話都可以跟我講喔 💌",
+      "微風帶來了森林的問候 🌲",
+      "記得喝口溫水休息下呀 🍵"
+    ];
+
+    setInterval(() => {
+      if (spriteBubble.style.display === "block" || isDraggingSprite) return;
+      const quote = CUTE_WHISPERS[Math.floor(Math.random() * CUTE_WHISPERS.length)];
+      spriteWhisper.innerText = quote;
+      spriteWhisper.classList.add("active");
+      setTimeout(() => { spriteWhisper.classList.remove("active"); }, 3800);
+    }, 11000);
+
+    let isDraggingSprite = false;
+    let hasDraggedFar = false;
+    let dragStartX = 0, dragStartY = 0;
+    let spriteInitialLeft = 0, spriteInitialTop = 0;
+
+    function autoFloatSprite() {
+      if (isDraggingSprite || spriteBubble.style.display === "block") return;
+      const stageRect = heroStage.getBoundingClientRect();
+      const maxW = stageRect.width - 80;
+      const maxH = stageRect.height - 90;
+
+      let randX = Math.floor(Math.random() * (maxW - 20)) + 10;
+      let randY = Math.floor(Math.random() * (maxH - 30)) + 15;
+
+      const midX = stageRect.width / 2;
+      const midY = stageRect.height / 2;
+      if (Math.abs(randX + 34 - midX) < 85 && Math.abs(randY + 34 - midY) < 85) {
+        randX = randX < midX ? randX - 70 : randX + 70;
+      }
+      randX = Math.max(10, Math.min(maxW, randX));
+      randY = Math.max(15, Math.min(maxH, randY));
+
+      spriteActor.style.transition = "all 4s cubic-bezier(0.25, 1, 0.5, 1)";
+      spriteActor.style.left = randX + "px";
+      spriteActor.style.top = randY + "px";
+      spriteActor.style.right = "auto";
+    }
+
+    let autoFlyInterval = setInterval(autoFloatSprite, 6500);
+
+    function onSpriteDragStart(clientX, clientY) {
+      isDraggingSprite = true;
+      hasDraggedFar = false;
+      dragStartX = clientX;
+      dragStartY = clientY;
+
+      const rect = spriteActor.getBoundingClientRect();
+      const stageRect = heroStage.getBoundingClientRect();
+      spriteInitialLeft = rect.left - stageRect.left;
+      spriteInitialTop = rect.top - stageRect.top;
+
+      spriteActor.classList.add("dragging");
+      spriteActor.style.transition = "none";
+      clearInterval(autoFlyInterval);
+    }
+
+    function onSpriteDragMove(clientX, clientY) {
+      if (!isDraggingSprite) return;
+      const deltaX = clientX - dragStartX;
+      const deltaY = clientY - dragStartY;
+
+      if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
+        hasDraggedFar = true;
+      }
+
+      const stageRect = heroStage.getBoundingClientRect();
+      let newLeft = spriteInitialLeft + deltaX;
+      let newTop = spriteInitialTop + deltaY;
+
+      newLeft = Math.max(10, Math.min(stageRect.width - 75, newLeft));
+      newTop = Math.max(10, Math.min(stageRect.height - 85, newTop));
+
+      spriteActor.style.left = newLeft + "px";
+      spriteActor.style.top = newTop + "px";
+      spriteActor.style.right = "auto";
+    }
+
+    function onSpriteDragEnd() {
+      if (!isDraggingSprite) return;
+      isDraggingSprite = false;
+      spriteActor.classList.remove("dragging");
+
+      if (!hasDraggedFar) {
+        triggerSpriteClickInteraction();
+      }
+
+      autoFlyInterval = setInterval(autoFloatSprite, 7000);
+    }
+
+    spriteActor.addEventListener("touchstart", (e) => {
+      e.stopPropagation();
+      onSpriteDragStart(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    window.addEventListener("touchmove", (e) => {
+      if (isDraggingSprite) onSpriteDragMove(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    window.addEventListener("touchend", () => {
+      if (isDraggingSprite) onSpriteDragEnd();
+    });
+
+    spriteActor.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      onSpriteDragStart(e.clientX, e.clientY);
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (isDraggingSprite) onSpriteDragMove(e.clientX, e.clientY);
+    });
+    window.addEventListener("mouseup", () => {
+      if (isDraggingSprite) onSpriteDragEnd();
+    });
+
+    async function triggerSpriteClickInteraction() {
+      if (!currentUser) { alert("請先完成身分設置"); return; }
+      const lastSanitized = document.getElementById("tableSanitizedText").innerText;
+      if (!lastSanitized || lastSanitized.includes("未開始")) {
+        spriteReplyContent.innerText = "🌱 請先按住按鈕錄製一段當下的心事，小精靈才能為你分憂解勞喔！";
+        spriteBubble.style.display = "block";
+        return;
+      }
+
+      spriteBubble.style.display = "block";
+      spriteReplyContent.innerText = "✨ 樹洞精靈正在聆聽並調配溫暖草藥茶...";
+
+      try {
+        const resp = await fetch("/fairy-reply", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: currentUser.email,
+            nickname: currentUser.nickname,
+            speech_text: lastSanitized
+          })
+        });
+        const d = await resp.json();
+
+        // 判定小精靈對話端點是否回傳危機訊號
+        if (d.status === "crisis_intercepted") {
+          document.getElementById("crisisModal").style.display = "flex";
+          spriteReplyContent.innerText = d.reply;
+          return;
+        }
+
+        spriteReplyContent.innerText = d.reply || "小精靈聽到了你的心聲，無論發生甚麼，我都站在你這一邊！";
+      } catch (err) {
+        spriteReplyContent.innerText = "🍃 森林微風拂過，樹洞精靈默默陪伴著你（網路連線稍有波動，但我仍在）。";
+      }
+    }
+
+    // 錄音核心：移離取消 + 10s動態倒數光環 + 20s截斷
+    const CIRCLE_CIRCUMFERENCE = 484;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let isCancelling = false;
+    let shouldDiscard = false;
+    let recordStartTime = 0;
+    let monitorTimer = null;
+    let startTouchY = 0;
+    let startTouchX = 0;
+
+    const recordBtn = document.getElementById("recordBtn");
+    const btnLabel = document.getElementById("btnLabel");
+    const btnSubLabel = document.getElementById("btnSubLabel");
+    const countdownSvg = document.getElementById("countdownSvg");
+    const countdownCircle = document.getElementById("countdownCircle");
+    const statusText = document.getElementById("status");
+    const tableRawText = document.getElementById("tableRawText");
+    const tableSanitizedText = document.getElementById("tableSanitizedText");
+
+    function resetRecordUI() {
+      if (monitorTimer) { clearInterval(monitorTimer); monitorTimer = null; }
+      isRecording = false;
+      isCancelling = false;
+      recordBtn.classList.remove("recording", "cancelling");
+      btnLabel.innerText = "按住講嘢";
+      btnSubLabel.innerText = "鬆手投遞 💌";
+      countdownSvg.style.display = "none";
+      countdownCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
+      countdownCircle.style.stroke = "#10b981";
+    }
+
+    async function startRecording() {
+      if (isRecording) return;
+      audioChunks = [];
+      shouldDiscard = false;
+      resetRecordUI();
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = handleAudioStopped;
+        mediaRecorder.start();
+      } catch (err) {
+        statusText.innerText = "❌ 麥克風啟動失敗，請檢查瀏覽器授權。";
+        resetRecordUI();
+        return;
+      }
+
+      isRecording = true;
+      recordStartTime = Date.now();
+      recordBtn.classList.add("recording");
+      btnLabel.innerText = "正在傾聽";
+      btnSubLabel.innerText = "滑移取消 ✖";
+      statusText.innerText = "🎙️ SenseVoice 本地識別中...";
+      statusText.style.color = "#059669";
+
+      monitorTimer = setInterval(() => {
+        if (!isRecording) { clearInterval(monitorTimer); return; }
+        const elapsed = (Date.now() - recordStartTime) / 1000;
+
+        if (elapsed >= 10 && elapsed < 20) {
+          countdownSvg.style.display = "block";
+          const remain = Math.ceil(20 - elapsed);
+          btnLabel.innerText = remain + "s";
+          btnSubLabel.innerText = "即將結束";
+
+          const progress = (elapsed - 10) / 10;
+          countdownCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE * (1 - progress);
+
+          if (elapsed >= 17) {
+            countdownCircle.style.stroke = "#ef4444";
+          }
+        }
+
+        if (elapsed >= 20) {
+          stopRecording(false);
+        }
+      }, 100);
+    }
+
+    function cancelRecording() {
+      if (!isRecording) return;
+      shouldDiscard = true;
+      resetRecordUI();
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        try { mediaRecorder.stop(); } catch(e){}
+      }
+      statusText.innerText = "🗑️ 錄音已取消，無資訊留存";
+      statusText.style.color = "#64748b";
+    }
+
+    function stopRecording(isForceCancel = false) {
+      if (!isRecording) return;
+      if (isForceCancel || isCancelling) {
+        cancelRecording();
+        return;
+      }
+      resetRecordUI();
+      statusText.innerText = "⚡ 邊緣轉錄並脫敏同步中...";
+      statusText.style.color = "#4f46e5";
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+    }
+
+    async function handleAudioStopped() {
+      if (shouldDiscard) {
+        audioChunks = [];
+        return;
+      }
+      const duration = Math.max(1, Math.round((Date.now() - recordStartTime) / 1000));
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const fd = new FormData();
+      fd.append("file", blob, "voice.webm");
+      fd.append("duration", duration);
+      fd.append("email", currentUser ? currentUser.email : "");
+      fd.append("nickname", currentUser ? currentUser.nickname : "同學");
+
+      try {
+        const resp = await fetch("/transcribe", { method: "POST", body: fd });
+        const data = await resp.json();
+
+        // -------------------------------------------------------------
+        // 極端危機觸發：不可關閉全屏遮罩層彈出與硬性鎖定
+        // -------------------------------------------------------------
+        if (data.status === "crisis_intercepted") {
+          document.getElementById("crisisModal").style.display = "flex";
+          tableRawText.innerText = data.raw_text || "檢測到自殘/輕生意圖語句";
+          tableSanitizedText.innerText = "🛑【三級極端危機硬性中斷：雲端轉發已徹底截斷】";
+          statusText.innerText = "🚨 檢測到嚴重危機信號，已啟動校園緊急求助保護！";
+          statusText.style.color = "#dc2626";
+          document.getElementById("btnActionC").disabled = true;
+          return;
+        }
+
+        if (data.status === "success") {
+          tableRawText.innerText = data.raw_text || "（無語音）";
+          tableSanitizedText.innerText = data.sanitized_text || "（無語音）";
+          statusText.innerText = "✅ 語音已識別並完成本地脫敏！";
+          statusText.style.color = "#047857";
+        }
+      } catch (e) {
+        statusText.innerText = "❌ 邊緣轉錄失敗，請確認後端運行中。";
+        statusText.style.color = "#dc2626";
+      }
+    }
+
+    recordBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      startTouchY = e.touches[0].clientY;
+      startTouchX = e.touches[0].clientX;
+      startRecording();
+    }, { passive: false });
+
+    recordBtn.addEventListener("touchmove", (e) => {
+      if (!isRecording) return;
+      const curY = e.touches[0].clientY;
+      const curX = e.touches[0].clientX;
+      const deltaY = startTouchY - curY;
+      const deltaX = Math.abs(curX - startTouchX);
+
+      if (deltaY > 45 || deltaX > 60) {
+        if (!isCancelling) {
+          isCancelling = true;
+          recordBtn.classList.add("cancelling");
+          btnLabel.innerText = "鬆手取消";
+          btnSubLabel.innerText = "放棄記錄 ✖";
+          statusText.innerText = "⚠️ 鬆開手指將放棄本次傾訴";
+          statusText.style.color = "#dc2626";
+          if (navigator.vibrate) navigator.vibrate(20);
+        }
+      } else {
+        if (isCancelling) {
+          isCancelling = false;
+          recordBtn.classList.remove("cancelling");
+          btnLabel.innerText = "正在傾聽";
+          btnSubLabel.innerText = "滑移取消 ✖";
+          statusText.innerText = "🎙️ SenseVoice 本地識別中...";
+          statusText.style.color = "#059669";
+        }
+      }
+    }, { passive: false });
+
+    recordBtn.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      stopRecording();
+    });
+
+    recordBtn.addEventListener("mousedown", (e) => { e.preventDefault(); startRecording(); });
+    window.addEventListener("mouseup", () => { if (isRecording) stopRecording(); });
+
+    // Action C：立即結算
+    const btnActionC = document.getElementById("btnActionC");
+    const actionCStatus = document.getElementById("actionCStatus");
+
+    btnActionC.addEventListener("click", async () => {
+      if (!currentUser) { alert("請先完成身分設置"); return; }
+      btnActionC.disabled = true;
+      actionCStatus.style.color = "#4f46e5";
+      actionCStatus.innerText = "⏳ 正在啟動：讀取碎片 ➔ 結合日曆先驗 ➔ 繪製手帳卡片 ➔ 無損還原郵寄...";
+
+      try {
+        const resp = await fetch("/trigger-daily-action", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: currentUser.email })
+        });
+        const res = await resp.json();
+        if (res.status === "success") {
+          actionCStatus.innerText = "🎉 今日限定手帳卡片已成功生成並送達您的 Gmail！";
+          actionCStatus.style.color = "#047857";
+        } else {
+          actionCStatus.innerText = "❌ 結算失敗：" + (res.message || "未知原因");
+          actionCStatus.style.color = "#dc2626";
+        }
+      } catch (err) {
+        actionCStatus.innerText = "❌ 連線超時或伺服器異常。";
+        actionCStatus.style.color = "#dc2626";
+      } finally {
+        btnActionC.disabled = false;
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", checkAuthStatus);
+  </script>
+</body>
+</html>
